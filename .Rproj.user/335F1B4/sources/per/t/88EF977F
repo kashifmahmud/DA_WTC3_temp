@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1510634101729.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1483313049",
+    "id" : "88EF977F",
+    "lastKnownWriteTime" : 1511187956,
+    "last_content_update" : 1511187956585,
+    "path" : "~/WSU/Final_projects/DA_WTC3_temp/R/CentralScript.R",
+    "project_path" : "R/CentralScript.R",
+    "properties" : {
+        "cursorPosition" : "89,23",
+        "scrollLine" : "71"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

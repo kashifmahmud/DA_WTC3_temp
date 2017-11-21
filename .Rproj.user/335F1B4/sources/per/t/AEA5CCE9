@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1510323599507.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2218473001",
+    "id" : "AEA5CCE9",
+    "lastKnownWriteTime" : 1510326019,
+    "last_content_update" : 1510790752757,
+    "path" : "~/WSU/Final_projects/DA_WTC3_temp/report_initial_data_processing_wtc3.Rmd",
+    "project_path" : "report_initial_data_processing_wtc3.Rmd",
+    "properties" : {
+        "cursorPosition" : "115,22",
+        "scrollLine" : "102"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
