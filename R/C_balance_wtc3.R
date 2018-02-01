@@ -4,7 +4,7 @@ names(C.balance) = c("Treatment","GPP","Ra","Rm_root","Rg_root","Cs","Clit_folia
 C.balance$Treatment = treat.group
   
 for (v in 1:length(treat.group)) {
-  data.set = subset(data.all,(treatment %in% treat.group[v]))
+  data.set = subset(data.all,(Treatment %in% treat.group[v]))
   # data.set[nrow(data.set),c(10:17)] = data.set[nrow(data.set)-1,c(10:17)]
   data.set[,c("LM","WM","RM","litter")] = na.spline(data.set[,c("LM","WM","RM","litter")])
   # plot(data.set$Date, data.set$LM)

@@ -32,12 +32,12 @@ source("R/functions_wtc3_CBM.R")
 
 #-------------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------------
-#- This script imports and processes the raw WTC3 experiment data to model the carbon pools and fluxes using DA
-# source("R/initial_data_processing_wtc3.R")
-rmd2rscript("report_initial_data_processing_wtc3.Rmd")
-source("report_initial_data_processing_wtc3.R")
-#-------------------------------------------------------------------------------------
+# #-------------------------------------------------------------------------------------
+# #- This script imports and processes the raw WTC3 experiment data to model the carbon pools and fluxes using DA
+# # source("R/initial_data_processing_wtc3.R")
+# rmd2rscript("report_initial_data_processing_wtc3.Rmd")
+# source("report_initial_data_processing_wtc3.R")
+# #-------------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------------
 # #- Make figure 1. Model representation of storage, allocation and autotrophic respiration processes and 
@@ -63,25 +63,54 @@ tnc.partitioning = read.csv("processed_data/tnc_partitioning_data.csv")
 # source("R/C_balance_wtc3.R")
 # 
 # #-------------------------------------------------------------------------------------
-
+# # 3000 chain length is sufficient for the convergance
+# chainLength = 1000
+# no.param.par.var=2
+# with.storage = T
+# model.comparison=F
+# model.optimization=F
+# start <- proc.time() # Start clock
+# # result = CBM.wtc3(chainLength = 3000, no.param.par.var=(nrow(data.all)/4)/30, treat.group=treat.group, with.storage, model.comparison=F, model.optimization=F) # Monthly parameters
+# result = CBM.wtc3(chainLength, no.param.par.var, treat.group, with.storage, model.comparison, model.optimization) # Quadratic/Cubic parameters
+# time_elapsed_series <- proc.time() - start # End clock
+# result[[6]]
+# write.csv(result[[6]], "output/bic.csv", row.names=FALSE) # unit of respiration rates: gC per gC plant per day	
+# 
+# # Plot parameters and biomass data fit
+# plot.Modelled.parameters(result,with.storage)
+# plot.Modelled.biomass(result,with.storage)
+#-------------------------------------------------------------------------------------
 source("R/functions_wtc3.R")	
 source("R/functions_wtc3_CBM.R")	
+
+# Model run for WTC3 dataset with clustering
+cluster <- makeCluster(detectCores()-6)
+# clusterEvalQ(cluster, library(xts))
+clusterExport(cl=cluster, list("data.all","tnc.partitioning","treat.group"))
+ex <- Filter(function(x) is.function(get(x, .GlobalEnv)), ls(.GlobalEnv))
+clusterExport(cluster, ex)
+result.cluster = list()
+bic.cluster = list()
+
 start <- proc.time() # Start clock
-# 3000 chain length is sufficient for the convergance
-chainLength = 1000
-no.param.par.var=2
-with.storage = T
-# result = CBM.wtc3(chainLength = 3000, no.param.par.var=(nrow(data.all)/4)/30, treat.group=treat.group, with.storage, model.comparison=F, model.optimization=F) # Monthly parameters
-result = CBM.wtc3(chainLength, no.param.par.var, treat.group=treat.group, with.storage, model.comparison=F, model.optimization=F) # Quadratic/Cubic parameters
+result <- clusterMap(cluster, CBM.wtc3, with.storage=c(T,T), model.comparison=c(F,F), model.optimization=c(F,F), 
+                     no.param.par.var=c(4,4),
+                     treat.group=treat.group,
+                     MoreArgs=list(chainLength=1000))
+
 time_elapsed_series <- proc.time() - start # End clock
-result[[6]]
-write.csv(result[[6]], "output/bic.csv", row.names=FALSE) # unit of respiration rates: gC per gC plant per day	
+stopCluster(cluster)
+
+listOfDataFrames <- vector(mode = "list", length = 2)
+for (i in 1:2) {
+  listOfDataFrames[[i]] <- data.frame(result[[i]][[6]])
+}
+bic = do.call("rbind", listOfDataFrames)
+write.csv(bic, "output/bic.csv", row.names=FALSE)
 
 # Plot parameters and biomass data fit
-plot.Modelled.parameters(result,with.storage)
-plot.Modelled.biomass(result,with.storage)
-#-------------------------------------------------------------------------------------
-
+plot.Modelled.parameters.wtc3(result,with.storage=T)
+plot.Modelled.biomass.wtc3(result,with.storage=T)
 
 #-------------------------------------------------------------------------------------
 # Calculate total C partitioning for individual treatments 
